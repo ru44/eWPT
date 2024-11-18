@@ -1,5 +1,104 @@
 # eWPT - Web Application Penetration Testing
 
+Tool Proficiency: Be comfortable with tools like Burp Suite, ZAP, sqlmap, ffuf, and custom scripts for automation, AND OF COURSE CHATGPT.
+Also yeah edit your /etc/resolv.conf to only allow ine dns servers while testing otherwise your scans are gonna get messed up.
+
+## Topics
+
+### Web Application Penetration Testing Processes and Methodologies (10%)
+
+Accurately assess a web application based on methodological, industry-standard best practices
+Identify vulnerabilities in web applications in accordance with the OWASP Web Security Testing Guide
+
+### Information Gathering & Reconnaissance (10%)
+
+Extract information from websites using passive reconnaissance & OSINT techniques
+Extract information about a target organization’s domains, subdomains, and IP addresses
+Examine Web Server Metafiles for information exposure
+### Web Application Analysis & Inspection (10%)
+
+Identify the type and version of a web server technology running on a given domain
+Identify the specific technologies or frameworks being used in a web application
+Analyze the structure of web applications to identify potential attack vectors
+Locate hidden files and directories not accessible through normal browsing
+Identify and exploit vulnerabilities caused by the improper implementation of HTTP methods
+
+### Web Application Vulnerability Assessment (15%)
+
+Identify and exploit common misconfigurations in web servers
+Test web applications for default credentials and weak passwords
+Bypass weak/broken authentication mechanisms
+Identify information disclosure vulnerabilities
+
+### Web Application Security Testing (25%)
+
+Identify and exploit directory traversal vulnerabilities for information disclosure
+Identify and exploit file upload vulnerabilities for remote code execution
+Identify and exploit Local File Inclusion(LFI) and Remote File Inclusion(RFI) vulnerabilities
+Identify and exploit Session Management vulnerabilities
+Exploit vulnerable and outdated web application components
+Perform bruteforce attacks against login forms
+Identify and exploit command injection vulnerabilities for remote code execution
+
+### Manual Exploitation of Common Web Application Vulnerabilities (20%)
+
+Identify and exploit Reflected XSS vulnerabilities
+Identify and exploit Stored XSS vulnerabilities
+Identify and exploit SQL Injection vulnerabilities
+Identify and exploit vulnerabilities in content management systems
+Extract information and credentials from backend databases
+
+### Web Service Security Testing (10%)
+
+Identify and enumerate information from web services
+Exploit vulnerable web services
+
+### Web Application Penetration Testing Methodology (10%)
+
+Accurately assess a web application based on methodological, industry-standard best practices.
+Identify and prioritize testing objectives based on business impact and risk assessment.
+
+### Web Application Reconnaissance (15%)
+
+Perform a comprehensive passive and active reconnaissance on designated target web applications by utilizing tools and techniques such as WHOIS lookups, DNS enumeration, and network scanning.
+Extract information about a target organization’s domains, subdomains, and IP addresses.
+Utilize fuzzing techniques to discover input validation vulnerabilities in web applications.
+Utilize Git-specific tools to automate the discovery of secrets and vulnerabilities in code.
+
+### Authentication Attacks (15%)
+
+Test various authentication methods (e.g., Basic, Digest, OAuth) by executing practical attacks such as credential stuffing and brute force.
+Identify common vulnerabilities in SSO implementations and their potential impacts.
+Identify and exploit Session Management vulnerabilities (e.g., session fixation and hijacking).
+Identify and exploit weaknesses in OAuth and OpenID Connect protocols.
+
+### Injection Vulnerabilities (15%)
+
+Identify and exploit SQL injection vulnerabilities in web applications, including error-based, blind, and time-based techniques.
+Utilize SQLMap and other tools to automate SQL injection attacks and demonstrate effective exploitation.
+Identify and exploit NoSQL injection vulnerabilities in web applications, demonstrating hands-on skills in manipulating data in NoSQL databases.
+Extract sensitive data from compromised databases using advanced querying techniques.
+
+### API Penetration Testing (25%)
+
+Conduct hands-on penetration tests on API endpoints to identify and exploit vulnerabilities effectively.
+Utilize automation tools for API vulnerability testing and demonstrate efficiency in identifying vulnerabilities.
+Analyze API endpoints for potential parameter manipulation vulnerabilities and demonstrate exploitation techniques.
+Conduct tests to identify vulnerabilities related to rate limiting, such as denial-of-service (DoS) attacks and resource exhaustion.
+Demonstrate the ability to bypass or manipulate rate limiting mechanisms in a controlled testing environment.
+
+### Server-Side Attacks (10%)
+
+Identify and exploit SSRF (Server-Side Request Forgery) attacks against server-side services.
+Perform deserialization attacks to manipulate server-side objects, leading to arbitrary code execution or privilege escalation.
+Perform LDAP injection attacks against web application directories to bypass authentication or extract sensitive information.
+
+### Filter Evasion & WAF Bypass (10%)
+
+Analyze and test WAF rules to identify weak configurations, demonstrating practical bypass techniques.
+Perform hands-on WAF evasion techniques, such as encoding, obfuscation, and payload fragmentation, to bypass filtering mechanisms.
+Bypass input validation mechanisms through obfuscation, payload encoding, and altering content types, focusing on SSRF and XXE exploitation.
+
 ## Table of Contents
 
 - [Introduction](#introduction)
