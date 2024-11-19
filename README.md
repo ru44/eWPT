@@ -15,6 +15,7 @@ Identify vulnerabilities in web applications in accordance with the OWASP Web Se
 Extract information from websites using passive reconnaissance & OSINT techniques
 Extract information about a target organization’s domains, subdomains, and IP addresses
 Examine Web Server Metafiles for information exposure
+
 ### Web Application Analysis & Inspection (10%)
 
 Identify the type and version of a web server technology running on a given domain
@@ -181,6 +182,281 @@ The attacker can steal cookies, session tokens, or perform unauthorized actions.
    - PHP: `$search = filter_input(INPUT_GET, 'search', FILTER_SANITIZE_STRING);`
 5. Avoid inline JavaScript : Avoid inline JavaScript and use external scripts instead.
    - Bad: `<script>alert('XSS')</script>`
+
+### Stored/Persistent XSS
+
+*Stored/Persistent XSS* occurs when malicious scripts are injected into a website and stored persistently in a database, file system, or any storage. These scripts are later served to users without proper sanitization, leading to their execution in users' browsers.
+
+#### How it Happens
+
+1. User Input: The attacker submits a payload via a form, API, or another input method (e.g., comment box or profile fields).
+2. Data Storage: The input is stored in a database or file without sanitization.
+3. Malicious Script Execution: The stored input is displayed to other users, leading to script execution.
+4. impact: The attacker can steal cookies, session tokens, or Defacing the website, redirecting users to malicious sites, or performing unauthorized actions.
+
+---
+
+#### Vulnerable Code Example
+
+```php
+<?php
+// Database connection (for example purposes)
+$conn = new mysqli("localhost", "root", "", "xss_demo");
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $comment = $_POST['comment']; // No sanitization here
+    $conn->query("INSERT INTO comments (content) VALUES ('$comment')");
+    echo "Comment added!";
+}
+
+$comments = $conn->query("SELECT content FROM comments");
+?>
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Comments</h2>
+    <form method="POST">
+        <textarea name="comment"></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+    <ul>
+        <?php while ($row = $comments->fetch_assoc()) {
+            echo "<li>" . $row['content'] . "</li>"; // Directly outputs stored data
+        } ?>
+    </ul>
+</body>
+</html>
+```
+
+#### Exploiting Stored XSS
+
+1. **Malicious Payload**:
+
+    - The attacker submits:
+
+        ```html
+        <script>alert('Stored XSS');</script>
+        ```
+
+2. **Stored Data**:
+
+    - The payload is stored in the `comments` table.
+3. **Execution**:
+
+    - When another user views the comments section, the payload executes:
+
+        ```html
+        <li><script>alert('Stored XSS');</script></li>
+        ```
+
+---
+
+#### Prevention Strategies
+
+1. **Escape Output**:
+
+    - Use `htmlspecialchars()` to sanitize data before displaying it:
+
+        ```php
+        echo htmlspecialchars($row['content'], ENT_QUOTES, 'UTF-8');
+        ```
+
+2. **Validate and Sanitize Input**:
+
+    - Filter dangerous inputs before storing them:
+
+        ```php
+        $comment = htmlspecialchars($_POST['comment'], ENT_QUOTES, 'UTF-8');
+        ```
+
+3. **Use Parameterized Queries**:
+
+    - Prevent SQL injection and sanitize input simultaneously:
+
+        ```php
+        $stmt = $conn->prepare("INSERT INTO comments (content) VALUES (?)");
+        $stmt->bind_param("s", $comment);
+        $stmt->execute();
+        ```
+
+4. **Content Security Policy (CSP)**:
+
+    - Add a CSP header to prevent execution of malicious scripts:
+
+        ```http
+        Content-Security-Policy: script-src 'self';
+        ```
+
+5. **Regular Security Audits**:
+
+    - Test for XSS vulnerabilities regularly using tools like Burp Suite or OWASP ZAP.
+
+---
+
+#### Example Fix
+
+```php
+<?php
+// Secure example with parameterized queries and escaping
+$conn = new mysqli("localhost", "root", "", "xss_demo");
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $comment = htmlspecialchars($_POST['comment'], ENT_QUOTES, 'UTF-8');
+    $stmt = $conn->prepare("INSERT INTO comments (content) VALUES (?)");
+    $stmt->bind_param("s", $comment);
+    $stmt->execute();
+    echo "Comment added!";
+}
+
+$comments = $conn->query("SELECT content FROM comments");
+?>
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Comments</h2>
+    <form method="POST">
+        <textarea name="comment"></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+    <ul>
+        <?php while ($row = $comments->fetch_assoc()) {
+            echo "<li>" . htmlspecialchars($row['content'], ENT_QUOTES, 'UTF-8') . "</li>";
+        } ?>
+    </ul>
+</body>
+</html>
+```
+
+---
+
+### DOM-Based Cross-Site Scripting (XSS)
+
+**DOM-based XSS** occurs when malicious scripts are executed in the browser due to insecure client-side JavaScript code. Unlike Reflected or Stored XSS, the server is not directly involved in rendering the attack payload; instead, the vulnerability is in the manipulation of the DOM on the client side.
+
+---
+
+#### How It Happens
+
+1. **Client-Side JavaScript**: The vulnerable code dynamically modifies the DOM using untrusted user input (e.g., from URL parameters or cookies) without proper validation or sanitization.
+2. **Execution**: The attack payload is injected and executed within the browser context.
+
+---
+
+#### Vulnerable Code Example
+
+#### HTML + JavaScript
+
+```html
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Welcome!</h2>
+    <div id="output"></div>
+    <script>
+        // Vulnerable code: reads data from the URL without sanitization
+        const urlParams = new URLSearchParams(window.location.search);
+        const user = urlParams.get('name');
+        document.getElementById('output').innerHTML = `Hello, ${user}!`; // Dangerous: unsanitized input
+    </script>
+</body>
+</html>
+```
+
+---
+
+#### Exploiting DOM-Based XSS
+
+1. **Malicious URL**:
+
+    - An attacker crafts the following URL:
+
+        ```php-template
+        http://example.com/?name=<script>alert('DOM XSS')</script>
+        ```
+
+2. **Execution**:
+
+    - When the victim visits the link, the browser executes the script:
+
+        ```html
+        <div id="output">Hello, <script>alert('DOM XSS')</script>!</div>
+        ```
+
+3. **Impact**:
+
+    - Stealing cookies or sensitive data.
+    - Redirecting users to malicious websites.
+    - Defacing the website.
+
+---
+
+#### Prevention Strategies
+
+1. **Avoid Direct `innerHTML` Usage**
+
+    - Use safer methods like `textContent` for inserting untrusted input:
+
+        ```javascript
+        document.getElementById('output').textContent = `Hello, ${user}!`;
+        ```
+
+2. **Validate and Sanitize Input**
+
+    - Use a client-side sanitization library like [DOMPurify](https://github.com/cure53/DOMPurify):
+
+        ```javascript
+        const sanitizedUser = DOMPurify.sanitize(user);
+        document.getElementById('output').innerHTML = `Hello, ${sanitizedUser}!`;
+        ```
+
+3. **Content Security Policy (CSP)**
+
+    - Restrict inline scripts by implementing a CSP header:
+
+        ```http
+        Content-Security-Policy: script-src 'self';
+        ```
+
+4. **Use Safe JavaScript APIs**
+
+    - Prefer methods like `createElement` or `textContent` instead of `innerHTML`.
+5. **Audit JavaScript Code**
+
+    - Review all places where user-controlled input interacts with the DOM.
+
+---
+
+#### Example Fix
+
+```html
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Welcome!</h2>
+    <div id="output"></div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const user = urlParams.get('name');
+        const sanitizedUser = DOMPurify.sanitize(user); // Sanitize input
+        document.getElementById('output').textContent = `Hello, ${sanitizedUser}!`; // Use safer method
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js"></script> <!-- DOMPurify -->
+</body>
+</html>
+```
+
+---
+
+#### Testing DOM-Based XSS
+
+1. Host the vulnerable example on a local server (e.g., with Laragon).
+2. Visit a URL like:
+
+    ```php
+    http://localhost/?name=<script>alert('Test')</script>
+    ```
+
+3. Observe the behavior and validate the fix with sanitized code.
 
 ## Cross-Site Request Forgery (CSRF)
 
