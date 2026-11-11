@@ -1,5 +1,19 @@
 # eWPT - Web Application Penetration Testing
 
+My notes from preparing for the **eWPT** (eLearnSecurity Web Application Penetration Tester)
+exam: the exam topics with their weights, a checklist, tool cheat sheets and small vulnerable
+examples to practise on.
+
+| Where | What |
+| --- | --- |
+| [CheckList.md](CheckList.md) | Checklist to work through during a test |
+| [Tools/](Tools) | Cheat sheets: [Nmap](Tools/Network/Nmap.md), [Nikto](Tools/Web/Nikto.md), [WPScan](Tools/Web/WPScan.md), [Plecost](Tools/Web/Plecost.md) |
+| [Examples/](Examples) | Clickjacking, PHP object injection, XPath injection and HTTP response splitting |
+
+These are for authorised testing and exam labs only.
+
+## Tips
+
 Tool Proficiency: Be comfortable with tools like Burp Suite, ZAP, sqlmap, ffuf, and custom scripts for automation, AND OF COURSE CHATGPT.
 Also yeah edit your /etc/resolv.conf to only allow ine dns servers while testing otherwise your scans are gonna get messed up.
 
